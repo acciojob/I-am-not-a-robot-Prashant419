@@ -1,18 +1,103 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>I'm not a robot</title>
-    <link rel="stylesheet" href="styles.css" />
-  </head>
-  <body>
-    <main>
-      <!-- solution start -->
-      
-      <!-- solution end -->
-    </main>
-    <script src="./script.js"></script>
-  </body>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Identical Tiles Verification</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <h3 id="h">Please click on the identical tiles to verify that you are not a robot.</h3>
+
+  <div id="container" class="container">
+    <!-- Images will be rendered here -->
+  </div>
+
+  <button id="reset" style="display:none;">Reset</button>
+  <button id="verify" style="display:none;">Verify</button>
+
+  <p id="para"></p>
+
+  <script>
+    const container = document.getElementById('container');
+    const resetButton = document.getElementById('reset');
+    const verifyButton = document.getElementById('verify');
+    const para = document.getElementById('para');
+    const hMessage = document.getElementById('h');
+
+    let state = 1; // Initial state
+
+    function renderImages() {
+      const imageOrder = [1, 2, 3, 4, 5, 1]; // Order of images with one repeat
+      const shuffledOrder = shuffleArray(imageOrder);
+
+      container.innerHTML = ''; // Clear previous images
+
+      shuffledOrder.forEach((index) => {
+        const img = document.createElement('img');
+        img.src = image${index}.jpg;
+        img.alt = Image ${index};
+        img.className = img${index};
+        img.addEventListener('click', handleImageClick);
+        container.appendChild(img);
+      });
+    }
+
+    function shuffleArray(array) {
+      return array.sort(() => Math.random() - 0.5);
+    }
+
+    function handleImageClick(event) {
+      const clickedImg = event.target;
+
+      if (state === 1) {
+        resetButton.style.display = 'inline-block';
+        state = 2;
+      }
+
+      clickedImg.classList.add('selected');
+
+      const selectedImages = document.querySelectorAll('.selected');
+
+      if (selectedImages.length === 2) {
+        verifyButton.style.display = 'inline-block';
+        state = 3;
+      }
+    }
+
+    function resetState() {
+      const selectedImages = document.querySelectorAll('.selected');
+      selectedImages.forEach((img) => img.classList.remove('selected'));
+
+      resetButton.style.display = 'none';
+      verifyButton.style.display = 'none';
+      para.innerHTML = '';
+      state = 1;
+      renderImages();
+    }
+
+    function handleVerifyClick() {
+      const selectedImages = document.querySelectorAll('.selected');
+      const image1Class = selectedImages[0].className;
+      const image2Class = selectedImages[1].className;
+
+      if (image1Class === image2Class) {
+        para.innerHTML = 'You are a human. Congratulations!';
+      } else {
+        para.innerHTML = 'We can\'t verify you as a human. You selected the non-identical tiles.';
+      }
+
+      verifyButton.style.display = 'none';
+      state = 4;
+    }
+
+    resetButton.addEventListener('click', resetState);
+    verifyButton.addEventListener('click', handleVerifyClick);
+
+    // Initial rendering
+    renderImages();
+  </script>
+
+</body>
 </html>
